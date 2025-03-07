@@ -48,7 +48,9 @@
   "dependencies": {
     "content-type": "^1.0.5",
     "cors": "^2.8.5",
+    "cross-fetch": "^4.1.0",
     "eventsource": "^3.0.2",
+    "eventsource-old": "github:EventSource/eventsource#v2.x",
     "express": "^5.0.1",
     "express-rate-limit": "^7.5.0",
     "pkce-challenge": "^4.1.0",

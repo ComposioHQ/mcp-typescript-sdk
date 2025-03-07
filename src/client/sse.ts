@@ -1,7 +1,36 @@
-import { EventSource, type ErrorEvent, type EventSourceInit } from "eventsource";
+import { EventSource as EventSourceOld, type ErrorEvent, type EventSourceInit } from "eventsource";
+
+// Dynamically import the appropriate EventSource implementation
+let EventSource: any = globalThis.EventSource;
+
+// Determine Node.js version if running in Node environment
+const nodeMajorVersion = typeof process !== 'undefined' && 
+                         process.versions && 
+                         parseInt(process.versions.node, 10);
+
+// Handle EventSource implementation based on environment
+if (nodeMajorVersion && nodeMajorVersion < 18) {
+  // Import eventsource-old for older Node.js versions
+  import("eventsource-old" as any).then(module => {
+    EventSource = module.default;
+  });
+} else if (!globalThis.EventSource) {
+  // Use eventsource-old for Node.js 18+ or non-Node environments without native EventSource
+  EventSource = EventSourceOld;
+}
+
+// Polyfill fetch if not available in the environment
+if (!globalThis.fetch) {
+  import("cross-fetch").then(module => {
+    globalThis.fetch = module.fetch;
+    globalThis.Headers = module.Headers;
+  });
+}
+
 import { Transport } from "../shared/transport.js";
 import { JSONRPCMessage, JSONRPCMessageSchema } from "../types.js";
 import { auth, AuthResult, OAuthClientProvider, UnauthorizedError } from "./auth.js";
+
 
 export class SseError extends Error {
   constructor(
@@ -113,7 +142,7 @@ export class SSEClientTransport implements Transport {
       this._eventSource = new EventSource(
         this._url.href,
         this._eventSourceInit ?? {
-          fetch: (url, init) => this._commonHeaders().then((headers) => fetch(url, {
+          fetch: (url: any, init: any) => this._commonHeaders().then((headers) => fetch(url, {
             ...init,
             headers: {
               ...headers,
@@ -124,22 +153,22 @@ export class SSEClientTransport implements Transport {
       );
       this._abortController = new AbortController();
 
-      this._eventSource.onerror = (event) => {
-        if (event.code === 401 && this._authProvider) {
+      this._eventSource!.onerror = (event) => {
+        if ((event as any).code === 401 && this._authProvider) {
           this._authThenStart().then(resolve, reject);
           return;
         }
 
-        const error = new SseError(event.code, event.message, event);
+        const error = new SseError((event as any).code, (event as any).message, event);
         reject(error);
         this.onerror?.(error);
       };
 
-      this._eventSource.onopen = () => {
+      this._eventSource!.onopen = () => {
         // The connection is open, but we need to wait for the endpoint to be received.
       };
 
-      this._eventSource.addEventListener("endpoint", (event: Event) => {
+      this._eventSource!.addEventListener("endpoint", (event: Event) => {
         const messageEvent = event as MessageEvent;
 
         try {
@@ -160,7 +189,7 @@ export class SSEClientTransport implements Transport {
         resolve();
       });
 
-      this._eventSource.onmessage = (event: Event) => {
+      this._eventSource!.onmessage = (event: Event) => {
         const messageEvent = event as MessageEvent;
         let message: JSONRPCMessage;
         try {
