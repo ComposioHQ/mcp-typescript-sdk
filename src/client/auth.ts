@@ -233,7 +233,7 @@ export async function startAuthorization(
   }
 
   // Generate PKCE challenge
-  const challenge = await pkceChallenge();
+  const challenge = await (pkceChallenge as any)();
   const codeVerifier = challenge.code_verifier;
   const codeChallenge = challenge.code_challenge;
 
