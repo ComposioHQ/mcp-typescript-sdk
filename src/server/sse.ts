@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
-import { IncomingMessage, ServerResponse } from "node:http";
+import { randomUUID } from "crypto";
+import { IncomingMessage, ServerResponse } from "http";
 import { Transport } from "../shared/transport.js";
 import { JSONRPCMessage, JSONRPCMessageSchema } from "../types.js";
 import getRawBody from "raw-body";

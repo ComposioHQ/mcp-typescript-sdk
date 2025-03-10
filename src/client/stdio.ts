@@ -1,6 +1,6 @@
-import { ChildProcess, IOType, spawn } from "node:child_process";
-import process from "node:process";
-import { Stream } from "node:stream";
+import { ChildProcess, IOType, spawn } from "child_process";
+import process from "process";
+import { Stream } from "stream";
 import { ReadBuffer, serializeMessage } from "../shared/stdio.js";
 import { Transport } from "../shared/transport.js";
 import { JSONRPCMessage } from "../types.js";

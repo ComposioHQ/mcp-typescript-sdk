@@ -12,22 +12,16 @@
     "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=10"
   },
   "keywords": [
     "modelcontextprotocol",
     "mcp"
   ],
-  "exports": {
-    "./*": {
-      "import": "./dist/esm/*",
-      "require": "./dist/cjs/*"
-    }
-  },
   "typesVersions": {
     "*": {
       "*": [
-        "./dist/esm/*"
+        "./*"
       ]
     }
   },
@@ -53,7 +47,7 @@
     "eventsource-old": "github:EventSource/eventsource#v2.x",
     "express": "^5.0.1",
     "express-rate-limit": "^7.5.0",
-    "pkce-challenge": "^4.1.0",
+    "pkce-challenge": "^3.1.0",
     "raw-body": "^3.0.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.24.1"

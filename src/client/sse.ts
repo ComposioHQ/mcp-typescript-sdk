@@ -1,7 +1,7 @@
 import { EventSource as EventSourceOld, type ErrorEvent, type EventSourceInit } from "eventsource";
 
 // Dynamically import the appropriate EventSource implementation
-let EventSource: any = globalThis.EventSource;
+let EventSource: any = global.EventSource;
 
 // Determine Node.js version if running in Node environment
 const nodeMajorVersion = typeof process !== 'undefined' && 
@@ -14,16 +14,16 @@ if (nodeMajorVersion && nodeMajorVersion < 18) {
   import("eventsource-old" as any).then(module => {
     EventSource = module.default;
   });
-} else if (!globalThis.EventSource) {
+} else if (!global.EventSource) {
   // Use eventsource-old for Node.js 18+ or non-Node environments without native EventSource
   EventSource = EventSourceOld;
 }
 
 // Polyfill fetch if not available in the environment
-if (!globalThis.fetch) {
+if (!global.fetch) {
   import("cross-fetch").then(module => {
-    globalThis.fetch = module.fetch;
-    globalThis.Headers = module.Headers;
+    global.fetch = module.fetch;
+    global.Headers = module.Headers;
   });
 }
 
